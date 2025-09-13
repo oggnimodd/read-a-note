@@ -2,6 +2,7 @@
 import { ref, onMounted, watch } from "vue";
 import { Renderer, Stave, StaveNote, Voice, Formatter } from "vexflow";
 import { useResizeObserver } from "@vueuse/core";
+import { isMobile } from "is-mobile";
 
 const props = defineProps({
   note: {
@@ -21,8 +22,12 @@ const renderNote = () => {
   if (!notationContainer.value || !props.note) return;
   notationContainer.value.innerHTML = "";
 
+  const FALLBACK_WIDTH = isMobile() ? 300 : 400;
+
+  console.log(FALLBACK_WIDTH);
+
   const containerWidth = notationContainer.value.offsetWidth;
-  const rendererWidth = containerWidth > 0 ? containerWidth : 400;
+  const rendererWidth = containerWidth > 0 ? containerWidth : FALLBACK_WIDTH;
   const staveWidth = rendererWidth - 20; // 10px padding on each side
 
   try {
@@ -82,7 +87,10 @@ const renderNote = () => {
   }
 };
 
-onMounted(renderNote);
+onMounted(async () => {
+  await nextTick();
+  renderNote();
+});
 watch([() => props.note, () => props.clef], renderNote);
 useResizeObserver(notationContainer, renderNote);
 </script>
@@ -90,6 +98,6 @@ useResizeObserver(notationContainer, renderNote);
 <template>
   <div
     ref="notationContainer"
-    class="flex min-h-[250px] items-center justify-center"
+    class="flex min-h-[250px] w-full items-center justify-center"
   />
 </template>
