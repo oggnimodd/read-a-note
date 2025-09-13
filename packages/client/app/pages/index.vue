@@ -5,6 +5,7 @@ import isMobile from "is-mobile";
 import SingleNote from "@/components/notation/SingleNote.vue";
 
 const currentNote = ref("c/4");
+const previousNote = ref("");
 const currentClef = ref<"treble" | "bass">("treble");
 const clefSetting = ref<"treble" | "bass">("treble");
 const feedback = ref<"waiting" | "correct" | "incorrect">("waiting");
@@ -67,13 +68,21 @@ const generateNewNote = () => {
   currentClef.value = finalClef;
 
   const notePool = finalClef === "treble" ? trebleNotes : bassNotes;
-  const randomIndex = Math.floor(Math.random() * notePool.length);
-  const selectedNote = notePool[randomIndex];
+
+  const availableNotes = notePool.filter((note) => note !== previousNote.value);
+
+  const notesToChooseFrom =
+    availableNotes.length > 0 ? availableNotes : notePool;
+
+  const randomIndex = Math.floor(Math.random() * notesToChooseFrom.length);
+  const selectedNote = notesToChooseFrom[randomIndex];
 
   if (selectedNote) {
+    previousNote.value = currentNote.value;
     currentNote.value = selectedNote;
   } else {
     console.error("Failed to select a valid note");
+    previousNote.value = currentNote.value;
     currentNote.value = "c/4";
   }
 };
@@ -95,7 +104,6 @@ const handleGuess = (guess: string) => {
   }
 };
 
-// Only enable keyboard events on mobile devices
 onKeyStroke(["c", "d", "e", "f", "g", "a", "b"], (e) => {
   if (deviceIsMobile.value) {
     e.preventDefault();

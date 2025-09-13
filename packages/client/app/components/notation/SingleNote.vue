@@ -25,14 +25,13 @@ const renderNote = () => {
       notationContainer.value,
       Renderer.Backends.SVG
     );
-
     renderer.resize(400, 250);
     const context = renderer.getContext();
-
     context.setStrokeStyle("#ffffff");
     context.setFillStyle("#ffffff");
 
-    const stave = new Stave(30, 30, 340);
+    const stave = new Stave(30, 30, 340, { spacingBetweenLinesPx: 17 });
+
     stave.addClef(props.clef);
     stave.setContext(context).draw();
 
@@ -40,6 +39,7 @@ const renderNote = () => {
       keys: [props.note],
       duration: "q",
       clef: props.clef,
+      alignCenter: true,
     });
 
     staveNote.setStyle({
@@ -51,7 +51,10 @@ const renderNote = () => {
     voice.setStrict(false);
     voice.addTickables([staveNote]);
 
-    new Formatter().joinVoices([voice]).format([voice], 280);
+    const formatter = new Formatter().joinVoices([voice]);
+    const availableWidth = stave.getNoteEndX() - stave.getNoteStartX();
+    formatter.format([voice], availableWidth > 0 ? availableWidth : 280);
+
     voice.draw(context, stave);
 
     const svg = notationContainer.value.querySelector("svg");
