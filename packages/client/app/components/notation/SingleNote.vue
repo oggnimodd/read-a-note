@@ -23,7 +23,7 @@ const renderNote = () => {
 
   const containerWidth = notationContainer.value.offsetWidth;
   const rendererWidth = containerWidth > 0 ? containerWidth : 400;
-  const staveWidth = rendererWidth - 60; // 30px padding on each side
+  const staveWidth = rendererWidth - 20; // 10px padding on each side
 
   try {
     const renderer = new Renderer(
@@ -35,7 +35,7 @@ const renderNote = () => {
     context.setStrokeStyle("#ffffff");
     context.setFillStyle("#ffffff");
 
-    const stave = new Stave(30, 30, staveWidth, { spacingBetweenLinesPx: 17 });
+    const stave = new Stave(10, 30, staveWidth, { spacingBetweenLinesPx: 17 });
 
     stave.addClef(props.clef);
     stave.setContext(context).draw();
@@ -60,7 +60,7 @@ const renderNote = () => {
     const availableWidth = stave.getNoteEndX() - stave.getNoteStartX();
     formatter.format(
       [voice],
-      availableWidth > 0 ? availableWidth : staveWidth - 60
+      availableWidth > 0 ? availableWidth : staveWidth - 20
     );
 
     voice.draw(context, stave);
