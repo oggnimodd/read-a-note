@@ -104,10 +104,30 @@ const handleGuess = (guess: string) => {
   }
 };
 
-onKeyStroke(["c", "d", "e", "f", "g", "a", "b"], (e) => {
-  if (deviceIsMobile.value) {
-    e.preventDefault();
-    handleGuess(e.key);
+const keyMap: { [key: string]: string } = {
+  "1": "c",
+  "2": "d",
+  "3": "e",
+  "4": "f",
+  "5": "g",
+  "6": "a",
+  "7": "b",
+  c: "c",
+  d: "d",
+  e: "e",
+  f: "f",
+  g: "g",
+  a: "a",
+  b: "b",
+};
+
+onKeyStroke(Object.keys(keyMap), (e) => {
+  if (!deviceIsMobile.value) {
+    const guess = keyMap[e.key.toLowerCase() as keyof typeof keyMap];
+    if (guess) {
+      e.preventDefault();
+      handleGuess(guess);
+    }
   }
 });
 
