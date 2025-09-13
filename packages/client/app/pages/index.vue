@@ -180,7 +180,7 @@ const containerClass = computed(() => {
         </label>
       </div>
 
-      <div :class="['flex justify-center', { 'w-full': deviceIsMobile }]">
+      <div :class="['flex justify-center', { 'w-[80%]': deviceIsMobile }]">
         <div
           :class="[
             containerClass,
