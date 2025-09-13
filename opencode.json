@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "taskmaster-ai": {
+      "type": "local",
+      "command": ["bunx", "-y", "task-master-ai"],
+      "enabled": true
+    }
+  }
+}

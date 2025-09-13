@@ -1,0 +1,83 @@
+<script setup lang="ts">
+import { ref, onMounted, watch } from "vue";
+import { Renderer, Stave, StaveNote, Voice, Formatter } from "vexflow";
+
+const props = defineProps({
+  note: {
+    type: String,
+    required: true,
+  },
+  clef: {
+    type: String,
+    required: true,
+    validator: (value: string) => ["treble", "bass"].includes(value),
+  },
+});
+
+const notationContainer = ref<HTMLDivElement | null>(null);
+
+const renderNote = () => {
+  if (!notationContainer.value || !props.note) return;
+  notationContainer.value.innerHTML = "";
+
+  try {
+    const renderer = new Renderer(
+      notationContainer.value,
+      Renderer.Backends.SVG
+    );
+
+    renderer.resize(400, 250);
+    const context = renderer.getContext();
+
+    context.setStrokeStyle("#ffffff");
+    context.setFillStyle("#ffffff");
+
+    const stave = new Stave(30, 30, 340);
+    stave.addClef(props.clef);
+    stave.setContext(context).draw();
+
+    const staveNote = new StaveNote({
+      keys: [props.note],
+      duration: "q",
+      clef: props.clef,
+    });
+
+    staveNote.setStyle({
+      fillStyle: "#ffffff",
+      strokeStyle: "#ffffff",
+    });
+
+    const voice = new Voice({ numBeats: 1, beatValue: 4 });
+    voice.setStrict(false);
+    voice.addTickables([staveNote]);
+
+    new Formatter().joinVoices([voice]).format([voice], 280);
+    voice.draw(context, stave);
+
+    const svg = notationContainer.value.querySelector("svg");
+    if (svg) {
+      const allElements = svg.querySelectorAll("*");
+      allElements.forEach((element) => {
+        element.setAttribute("stroke", "#ffffff");
+        element.setAttribute("fill", "#ffffff");
+      });
+    }
+  } catch (error) {
+    console.error("VexFlow Error:", error);
+    if (notationContainer.value) {
+      notationContainer.value.innerHTML =
+        '<p class="text-red-400 p-4 text-center">Invalid Note</p>';
+    }
+  }
+};
+
+onMounted(renderNote);
+watch([() => props.note, () => props.clef], renderNote);
+</script>
+
+<template>
+  <div
+    ref="notationContainer"
+    class="flex min-h-[250px] items-center justify-center"
+  />
+</template>

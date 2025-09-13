@@ -1,0 +1,41 @@
+{
+  "name": "read-a-note",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start:backend": "bun packages/backend/index.ts",
+    "dev": "concurrently \"bun:dev:*\"",
+    "dev:client": "bun --cwd packages/client dev",
+    "prepare": "husky",
+    "pre-commit": "lint-staged",
+    "format": "prettier --write ."
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@biomejs/biome": "2.1.4",
+    "@types/bun": "latest",
+    "concurrently": "^9.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.14"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "vexflow": "^5.0.0"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,json,jsonc}": [
+      "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
+    ],
+    "**/*.vue": [
+      "prettier --write"
+    ]
+  }
+}
