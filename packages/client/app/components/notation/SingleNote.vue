@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { Renderer, Stave, StaveNote, Voice, Formatter } from "vexflow";
+import { useResizeObserver } from "@vueuse/core";
 
 const props = defineProps({
   note: {
@@ -20,17 +21,21 @@ const renderNote = () => {
   if (!notationContainer.value || !props.note) return;
   notationContainer.value.innerHTML = "";
 
+  const containerWidth = notationContainer.value.offsetWidth;
+  const rendererWidth = containerWidth > 0 ? containerWidth : 400;
+  const staveWidth = rendererWidth - 60; // 30px padding on each side
+
   try {
     const renderer = new Renderer(
       notationContainer.value,
       Renderer.Backends.SVG
     );
-    renderer.resize(400, 250);
+    renderer.resize(rendererWidth, 250);
     const context = renderer.getContext();
     context.setStrokeStyle("#ffffff");
     context.setFillStyle("#ffffff");
 
-    const stave = new Stave(30, 30, 340, { spacingBetweenLinesPx: 17 });
+    const stave = new Stave(30, 30, staveWidth, { spacingBetweenLinesPx: 17 });
 
     stave.addClef(props.clef);
     stave.setContext(context).draw();
@@ -53,7 +58,10 @@ const renderNote = () => {
 
     const formatter = new Formatter().joinVoices([voice]);
     const availableWidth = stave.getNoteEndX() - stave.getNoteStartX();
-    formatter.format([voice], availableWidth > 0 ? availableWidth : 280);
+    formatter.format(
+      [voice],
+      availableWidth > 0 ? availableWidth : staveWidth - 60
+    );
 
     voice.draw(context, stave);
 
@@ -76,6 +84,7 @@ const renderNote = () => {
 
 onMounted(renderNote);
 watch([() => props.note, () => props.clef], renderNote);
+useResizeObserver(notationContainer, renderNote);
 </script>
 
 <template>

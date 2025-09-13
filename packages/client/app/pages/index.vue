@@ -151,7 +151,10 @@ const containerClass = computed(() => {
 <template>
   <div class="flex h-screen flex-col text-white">
     <div
-      class="flex flex-1 flex-col items-center justify-center space-y-12 p-8"
+      :class="[
+        'flex flex-1 flex-col items-center justify-center space-y-12',
+        deviceIsMobile ? 'py-8' : 'p-8',
+      ]"
     >
       <div class="flex justify-center gap-12">
         <label class="flex cursor-pointer items-center gap-3">
@@ -177,10 +180,13 @@ const containerClass = computed(() => {
         </label>
       </div>
 
-      <div class="flex justify-center">
+      <div :class="['flex justify-center', { 'w-full': deviceIsMobile }]">
         <div
-          :class="containerClass"
-          class="rounded-lg border-2 p-8 transition-all duration-300"
+          :class="[
+            containerClass,
+            deviceIsMobile ? '' : 'rounded-lg border-2 p-8',
+            'transition-all duration-300',
+          ]"
         >
           <SingleNote :note="currentNote" :clef="currentClef" />
         </div>
