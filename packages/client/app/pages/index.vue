@@ -69,7 +69,7 @@ const generateNewNote = () => {
 
   const notePool = finalClef === "treble" ? trebleNotes : bassNotes;
 
-  const availableNotes = notePool.filter((note) => note !== previousNote.value);
+  const availableNotes = notePool.filter((note) => note !== currentNote.value);
 
   const notesToChooseFrom =
     availableNotes.length > 0 ? availableNotes : notePool;
