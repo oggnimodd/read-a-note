@@ -149,7 +149,7 @@ const containerClass = computed(() => {
 </script>
 
 <template>
-  <div class="flex h-screen flex-col bg-slate-900 text-white">
+  <div class="flex h-screen flex-col text-white">
     <div
       class="flex flex-1 flex-col items-center justify-center space-y-12 p-8"
     >
